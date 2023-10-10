@@ -1,6 +1,8 @@
 package api
 
 import (
+	app "dis-test/internal/api/app/service"
+	pkg "dis-test/pkg/responser"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -20,8 +22,8 @@ type Discipline interface {
 	HandleDeletePrerequisite(w http.ResponseWriter, r *http.Request)
 }
 
-func NewHandler(r *mux.Router) *Handler {
+func NewHandler(r *mux.Router, service *app.Service, responser *pkg.Responser) *Handler {
 	return &Handler{
-		Discipline: NewDisciplineHandler(r),
+		Discipline: NewDisciplineHandler(r, service, responser),
 	}
 }

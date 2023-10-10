@@ -2,7 +2,11 @@ package main
 
 import (
 	entity "dis-test/internal/api/adapter/entity"
-	apihandler "dis-test/internal/api/port/handler"
+	appRepository "dis-test/internal/api/adapter/repository"
+	appSerializer "dis-test/internal/api/app/serializer"
+	appService "dis-test/internal/api/app/service"
+	appHandler "dis-test/internal/api/port/handler"
+	pkg "dis-test/pkg/responser"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -29,7 +33,11 @@ func runAPIServer() {
 	}
 	r := mux.NewRouter()
 
-	apihandler.NewHandler(r)
+	repo := appRepository.NewRepository(db)
+	serializer := appSerializer.NewSerializer()
+	service := appService.NewService(repo, serializer)
+	responser := pkg.NewResponser()
+	appHandler.NewHandler(r, service, responser)
 
 	logrus.Fatal(http.ListenAndServe(":8080", r))
 }

@@ -50,3 +50,42 @@ func (service *DisciplineService) GetById(id int) (*model.Discipline, error) {
 
 	return &disciplineDTO, nil
 }
+
+func (service *DisciplineService) DeleteById(id int) error {
+	return service.repo.Delete(id)
+}
+
+func (service *DisciplineService) UpdateById(id int, disciplineDTO *model.Discipline) (*model.Discipline, error) {
+	disciplineEntity, err := service.repo.Update(id, disciplineDTO.Title, disciplineDTO.CreditUnits, disciplineDTO.AcademicHours)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := service.serializer.EntityToDTO(disciplineEntity)
+
+	return &result, nil
+}
+
+func (service *DisciplineService) AddPrerequisiteById(disciplineId int, prerequisiteId int) (*model.Discipline, error) {
+	disciplineEntity, err := service.repo.AddPrerequisite(disciplineId, prerequisiteId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := service.serializer.EntityToDTO(disciplineEntity)
+
+	return &result, nil
+}
+func (service *DisciplineService) DeletePrerequisiteById(disciplineId int, prerequisiteId int) (*model.Discipline, error) {
+	disciplineEntity, err := service.repo.DeletePrerequisite(disciplineId, prerequisiteId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := service.serializer.EntityToDTO(disciplineEntity)
+
+	return &result, nil
+}

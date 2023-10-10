@@ -1,17 +1,23 @@
 package api
 
 import (
-	"fmt"
+	model "dis-test/internal/api/app/model"
+	app "dis-test/internal/api/app/service"
+	pkg "dis-test/pkg/responser"
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
+	"strconv"
 )
 
 type DisciplineHandler struct {
-	r *mux.Router
+	r         *mux.Router
+	service   *app.Service
+	responser *pkg.Responser
 }
 
-func NewDisciplineHandler(r *mux.Router) *DisciplineHandler {
-	disciplineHandler := DisciplineHandler{r}
+func NewDisciplineHandler(r *mux.Router, service *app.Service, responser *pkg.Responser) *DisciplineHandler {
+	disciplineHandler := DisciplineHandler{r, service, responser}
 	disciplineHandler.addRoutes()
 	return &disciplineHandler
 }
@@ -29,32 +35,129 @@ func (handler *DisciplineHandler) addRoutes() {
 }
 
 func (handler *DisciplineHandler) HandleList(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "hello")
+	disciplineList, err := handler.service.Discipline.GetList()
+
+	if err != nil {
+		handler.responser.BadRequestResponse(w, err)
+		return
+	}
+
+	handler.responser.SuccessfulResponse(w, disciplineList)
 }
 
 func (handler *DisciplineHandler) HandleShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["id"]
-	response := fmt.Sprintf("%s", id)
-	fmt.Fprintf(w, response)
+	id, _ := strconv.Atoi(vars["id"])
+
+	discipline, err := handler.service.Discipline.GetById(id)
+
+	if err != nil {
+		handler.responser.NotFoundResponse(w, err)
+		return
+	}
+
+	handler.responser.SuccessfulResponse(w, discipline)
 }
 
 func (handler *DisciplineHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "hello")
+	var newDiscipline model.Discipline
+
+	err := json.NewDecoder(r.Body).Decode(&newDiscipline)
+
+	if err != nil {
+		handler.responser.BadRequestResponse(w, err)
+		return
+	}
+
+	result, err := handler.service.Discipline.Create(&newDiscipline)
+
+	if err != nil {
+		handler.responser.BadRequestResponse(w, err)
+		return
+	}
+
+	handler.responser.SuccessfulResponse(w, result)
 }
 
 func (handler *DisciplineHandler) HandleUpdate(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "hello")
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	var newDiscipline model.Discipline
+
+	err := json.NewDecoder(r.Body).Decode(&newDiscipline)
+
+	if err != nil {
+		handler.responser.BadRequestResponse(w, err)
+		return
+	}
+
+	result, err := handler.service.Discipline.UpdateById(id, &newDiscipline)
+
+	if err != nil {
+		handler.responser.BadRequestResponse(w, err)
+		return
+	}
+
+	handler.responser.SuccessfulResponse(w, result)
 }
 
 func (handler *DisciplineHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "hello")
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	err := handler.service.Discipline.DeleteById(id)
+
+	if err != nil {
+		handler.responser.NotFoundResponse(w, err)
+		return
+	}
+
+	handler.responser.NoContentResponse(w)
 }
 
 func (handler *DisciplineHandler) HandleAddPrerequisite(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "hello")
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	var prerequisite model.Prerequisite
+
+	err := json.NewDecoder(r.Body).Decode(&prerequisite)
+
+	if err != nil {
+		handler.responser.BadRequestResponse(w, err)
+		return
+	}
+
+	discipline, err := handler.service.Discipline.AddPrerequisiteById(id, prerequisite.ID)
+
+	if err != nil {
+		handler.responser.NotFoundResponse(w, err)
+		return
+	}
+
+	handler.responser.SuccessfulResponse(w, discipline)
 }
 
 func (handler *DisciplineHandler) HandleDeletePrerequisite(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "hello")
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	var prerequisite model.Prerequisite
+
+	err := json.NewDecoder(r.Body).Decode(&prerequisite)
+
+	if err != nil {
+		handler.responser.BadRequestResponse(w, err)
+		return
+	}
+
+	discipline, err := handler.service.Discipline.DeletePrerequisiteById(id, prerequisite.ID)
+
+	if err != nil {
+		handler.responser.NotFoundResponse(w, err)
+		return
+	}
+
+	handler.responser.SuccessfulResponse(w, discipline)
 }
