@@ -5,8 +5,7 @@ import (
 	model "dis-test/internal/api/app/model"
 )
 
-type DisciplineSerializer struct {
-}
+type DisciplineSerializer struct{}
 
 func NewDisciplineSerializer() *DisciplineSerializer {
 	return &DisciplineSerializer{}

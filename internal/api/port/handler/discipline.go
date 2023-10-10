@@ -26,8 +26,8 @@ func (handler *DisciplineHandler) addRoutes() {
 	disciplines := handler.r.PathPrefix("/discipline").Subrouter()
 
 	disciplines.HandleFunc("/", handler.HandleList).Methods("GET")
-	disciplines.HandleFunc("/{id}", handler.HandleShow)
 	disciplines.HandleFunc("/", handler.HandleCreate).Methods("POST")
+	disciplines.HandleFunc("/{id}", handler.HandleShow).Methods("GET")
 	disciplines.HandleFunc("/{id}", handler.HandleUpdate).Methods("PUT")
 	disciplines.HandleFunc("/{id}", handler.HandleDelete).Methods("DELETE")
 	disciplines.HandleFunc("/{id}/prerequisite", handler.HandleAddPrerequisite).Methods("POST")

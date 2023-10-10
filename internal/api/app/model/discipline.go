@@ -7,7 +7,7 @@ type DisciplineList struct {
 type Discipline struct {
 	ID            uint
 	Title         string
-	CreditUnits   float64
+	CreditUnits   float32
 	AcademicHours uint32
 	Prerequisites []Discipline
 }

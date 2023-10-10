@@ -28,7 +28,7 @@ func (repo *DisciplineRepository) FindById(id int) (*entity.Discipline, error) {
 	return &discipline, result.Error
 }
 
-func (repo *DisciplineRepository) Create(title string, creditUnits float64, academicHours uint32) (*entity.Discipline, error) {
+func (repo *DisciplineRepository) Create(title string, creditUnits float32, academicHours uint32) (*entity.Discipline, error) {
 
 	discipline := entity.Discipline{
 		Title:         title,
@@ -47,21 +47,21 @@ func (repo *DisciplineRepository) Delete(id int) error {
 	return result.Error
 }
 
-func (repo *DisciplineRepository) Update(id int, title string, creditUnits float64, academicHours uint32) (*entity.Discipline, error) {
+func (repo *DisciplineRepository) Update(id int, title string, creditUnits float32, academicHours uint32) (*entity.Discipline, error) {
+	var discipline entity.Discipline
+	result := repo.db.First(&discipline, id)
 
-	discipline, err := repo.FindById(id)
-
-	if err != nil {
-		return nil, err
+	if result.Error != nil {
+		return nil, result.Error
 	}
 
 	discipline.Title = title
 	discipline.CreditUnits = creditUnits
 	discipline.AcademicHours = academicHours
 
-	result := repo.db.Save(discipline)
+	result = repo.db.Save(discipline)
 
-	return discipline, result.Error
+	return &discipline, result.Error
 }
 
 func (repo *DisciplineRepository) AddPrerequisite(disciplineId int, prerequisiteId int) (*entity.Discipline, error) {
