@@ -1,11 +1,14 @@
 package main
 
 import (
-	api "dis-test/internal/api/ports/entity"
+	entity "dis-test/internal/api/adapter/entity"
+	apihandler "dis-test/internal/api/port/handler"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"net/http"
 	"os"
 )
 
@@ -20,18 +23,15 @@ func runAPIServer() {
 		logrus.Fatalf("Error occurred while opening db: %s", err.Error())
 	}
 
-	err = db.AutoMigrate(&api.Discipline{}) //TODO move to migrations
+	err = db.AutoMigrate(&entity.Discipline{}) //TODO move to migrations
 	if err != nil {
 		logrus.Fatalf("Error occurred while automigrating: %s", err.Error())
 	}
-	//repos := repositories.NewRepository(db)
-	//services := service.NewService(repos)
-	//handlers := handler.NewHandler(services)
-	//
-	//server := apiserver.NewServer("8080", handlers.InitRoutes())
-	//if err := server.Run(); err != nil {
-	//	logrus.Fatalf("Error occurred while running http server: %s", err.Error())
-	//}
+	r := mux.NewRouter()
+
+	apihandler.NewHandler(r)
+
+	logrus.Fatal(http.ListenAndServe(":8080", r))
 }
 
 func initDB() (db *gorm.DB, err error) {

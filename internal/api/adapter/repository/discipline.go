@@ -1,7 +1,7 @@
 package api
 
 import (
-	api "dis-test/internal/api/ports/entity"
+	api "dis-test/internal/api/adapter/entity"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +13,7 @@ func NewDisciplineRepository(db *gorm.DB) *DisciplineRepository {
 	return &DisciplineRepository{db: db}
 }
 
-func (repo *DisciplineRepository) findAll() ([]*api.Discipline, error) {
+func (repo *DisciplineRepository) FindAll() ([]*api.Discipline, error) {
 	var disciplines []*api.Discipline
 
 	result := repo.db.Find(&disciplines)
@@ -21,17 +21,14 @@ func (repo *DisciplineRepository) findAll() ([]*api.Discipline, error) {
 	return disciplines, result.Error
 }
 
-func (repo *DisciplineRepository) findById(id int) (*api.Discipline, error) {
+func (repo *DisciplineRepository) FindById(id int) (*api.Discipline, error) {
 	var discipline api.Discipline
 	result := repo.db.Preload("Prerequisites").First(&discipline, id)
 
 	return &discipline, result.Error
 }
 
-func (repo *DisciplineRepository) create(
-	title string,
-	creditUnits float64,
-	academicHours uint32) (*api.Discipline, error) {
+func (repo *DisciplineRepository) Create(title string, creditUnits float64, academicHours uint32) (*api.Discipline, error) {
 
 	discipline := api.Discipline{
 		Title:         title,
@@ -44,19 +41,15 @@ func (repo *DisciplineRepository) create(
 	return &discipline, result.Error
 }
 
-func (repo *DisciplineRepository) delete(id int) error {
+func (repo *DisciplineRepository) Delete(id int) error {
 	result := repo.db.Delete(&api.Discipline{}, id)
 
 	return result.Error
 }
 
-func (repo *DisciplineRepository) update(
-	id int,
-	title string,
-	creditUnits float64,
-	academicHours uint32) (*api.Discipline, error) {
+func (repo *DisciplineRepository) Update(id int, title string, creditUnits float64, academicHours uint32) (*api.Discipline, error) {
 
-	discipline, err := repo.findById(id)
+	discipline, err := repo.FindById(id)
 
 	if err != nil {
 		return nil, err
@@ -71,14 +64,14 @@ func (repo *DisciplineRepository) update(
 	return discipline, result.Error
 }
 
-func (repo *DisciplineRepository) addPrerequisite(disciplineId int, prerequisiteId int) (*api.Discipline, error) {
-	discipline, err := repo.findById(disciplineId)
+func (repo *DisciplineRepository) AddPrerequisite(disciplineId int, prerequisiteId int) (*api.Discipline, error) {
+	discipline, err := repo.FindById(disciplineId)
 
 	if err != nil {
 		return nil, err
 	}
 
-	prerequisite, err := repo.findById(prerequisiteId)
+	prerequisite, err := repo.FindById(prerequisiteId)
 
 	if err != nil {
 		return nil, err
@@ -89,14 +82,14 @@ func (repo *DisciplineRepository) addPrerequisite(disciplineId int, prerequisite
 	return discipline, err
 }
 
-func (repo *DisciplineRepository) deletePrerequisite(disciplineId int, prerequisiteId int) (*api.Discipline, error) {
-	discipline, err := repo.findById(disciplineId)
+func (repo *DisciplineRepository) DeletePrerequisite(disciplineId int, prerequisiteId int) (*api.Discipline, error) {
+	discipline, err := repo.FindById(disciplineId)
 
 	if err != nil {
 		return nil, err
 	}
 
-	prerequisite, err := repo.findById(prerequisiteId)
+	prerequisite, err := repo.FindById(prerequisiteId)
 
 	if err != nil {
 		return nil, err
