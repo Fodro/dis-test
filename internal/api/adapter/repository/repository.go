@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repository struct {
+type Repo struct {
 	Discipline
 }
 
@@ -19,8 +19,8 @@ type Discipline interface {
 	DeletePrerequisite(disciplineId int, prerequisiteId int) (*api.Discipline, error)
 }
 
-func NewRepository(db *gorm.DB) *Repository {
-	return &Repository{
+func NewRepository(db *gorm.DB) *Repo {
+	return &Repo{
 		Discipline: NewDisciplineRepository(db),
 	}
 }

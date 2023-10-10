@@ -16,7 +16,7 @@ func NewDisciplineRepository(db *gorm.DB) *DisciplineRepository {
 func (repo *DisciplineRepository) FindAll() ([]*api.Discipline, error) {
 	var disciplines []*api.Discipline
 
-	result := repo.db.Find(&disciplines)
+	result := repo.db.Preload("Prerequisites").Find(&disciplines)
 
 	return disciplines, result.Error
 }
