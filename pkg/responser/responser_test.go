@@ -9,7 +9,7 @@ import (
 )
 
 type Response struct {
-	Alive bool
+	Alive bool `json:"alive"`
 }
 
 func TestResponser_SuccessfulResponse(t *testing.T) {
@@ -23,7 +23,7 @@ func TestResponser_SuccessfulResponse(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, rr.Code)
 
-	expected := `{"Alive":true}`
+	expected := `{"alive":true}`
 	assert.Equal(t, expected, rr.Body.String())
 
 	actual := rr.Header().Get("Content-Type")
@@ -52,7 +52,7 @@ func TestResponser_BadRequestResponse(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, rr.Code)
 
-	assert.Equal(t, `{"Code":400,"Error":"test"}`, rr.Body.String())
+	assert.Equal(t, `{"code":400,"error":"test"}`, rr.Body.String())
 
 	actual := rr.Header().Get("Content-Type")
 	assert.Equal(t, "application/json", actual)
@@ -66,7 +66,7 @@ func TestResponser_NotFoundResponse(t *testing.T) {
 
 	assert.Equal(t, http.StatusNotFound, rr.Code)
 
-	assert.Equal(t, `{"Code":404,"Error":"test"}`, rr.Body.String())
+	assert.Equal(t, `{"code":404,"error":"test"}`, rr.Body.String())
 
 	actual := rr.Header().Get("Content-Type")
 	assert.Equal(t, "application/json", actual)
@@ -80,7 +80,7 @@ func TestResponser_ErrorResponse(t *testing.T) {
 
 	assert.Equal(t, http.StatusInternalServerError, rr.Code)
 
-	assert.Equal(t, `{"Code":500,"Error":"test"}`, rr.Body.String())
+	assert.Equal(t, `{"code":500,"error":"test"}`, rr.Body.String())
 
 	actual := rr.Header().Get("Content-Type")
 	assert.Equal(t, "application/json", actual)

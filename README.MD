@@ -15,6 +15,7 @@
 Документация будет доступна по роуту `/api/swagger/`
 ## Работа с kafka
 С кафкой реализована аналогичная CRUD-схема.
+Сервис слушает Topic `disciplines`
 В key сообщения нужно писать необходмое действие:
 ``
 "create", "delete", "update", "addPrerequisite", "deletePrerequisite"
