@@ -13,3 +13,21 @@
 После добавления к нужному handler'у документации, нужно запустить команду `make generate-openapi`
 
 Документация будет доступна по роуту `/api/swagger/`
+## Работа с kafka
+С кафкой реализована аналогичная CRUD-схема.
+В key сообщения нужно писать необходмое действие:
+``
+"create", "delete", "update", "addPrerequisite", "deletePrerequisite"
+``
+### Create
+В value нужно передать json. Схема такая же, как у запроса на создание в Ресте
+### Delete
+В value нужно передать string, содержащий id дисциплины для удаления
+### Update
+В value нужно передать аналогичное Create значение, но добавив `id: int`
+### AddPrerequisite
+В value нужно передать json вида:
+``{"discipline_id": int, "prerequisite_id": int}``
+### DeletePrerequisite
+В value нужно передать json вида:
+``{"discipline_id": int, "prerequisite_id": int}``

@@ -35,7 +35,8 @@ func main() {
 		logrus.Fatalf("Error occurred while opening db: %s", err.Error())
 	}
 
-	err = db.AutoMigrate(&entity.Discipline{}) //TODO move to migrations
+	err = db.AutoMigrate(&entity.Discipline{})
+
 	if err != nil {
 		logrus.Fatalf("Error occurred while automigrating: %s", err.Error())
 	}
@@ -60,8 +61,6 @@ func runAPIServer(db *gorm.DB) {
 		httpSwagger.DocExpansion("none"),
 		httpSwagger.DomID("swagger-ui"),
 	)).Methods(http.MethodGet)
-
-	r.PathPrefix("/").HandlerFunc(defaultHandler)
 
 	logrus.Fatal(http.ListenAndServe(":8080", r))
 }
@@ -90,20 +89,15 @@ func runMessageConsuming(db *gorm.DB) {
 
 	config := getKafkaConfig()
 	disciplineConsumer.Init(&config)
-	logrus.Error("ready to read")
 	disciplineConsumer.ReadMessages()
 }
 
 func getKafkaConfig() kafka.ConfigMap {
 	m := make(map[string]kafka.ConfigValue)
 
-	m["bootstrap.servers"] = "kafka:9092"
-	m["group.id"] = "discipline-api"
+	m["bootstrap.servers"] = os.Getenv("KAFKA_BOOTSTRAP_SERVERS")
+	m["group.id"] = os.Getenv("KAFKA_GROUP_ID")
 	m["auto.offset.reset"] = "earliest"
 
 	return m
-}
-
-func defaultHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "%s", r.RequestURI)
 }
