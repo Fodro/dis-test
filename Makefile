@@ -55,8 +55,10 @@ logs-api:
 	$(DOCKER_COMPOSE) logs api
 logs-postgres:
 	$(DOCKER_COMPOSE) logs postgres
-logs-redoc:
-	$(DOCKER_COMPOSE) logs redoc
+logs-kafka:
+	$(DOCKER_COMPOSE) logs kafka
+logs-zookeeper:
+	$(DOCKER_COMPOSE) logs zookeeper
 
 ps:
 	$(DOCKER_COMPOSE) ps

@@ -1,7 +1,9 @@
 package main
 
 import (
+	consumer "dis-test/internal/api/adapter/consumer"
 	entity "dis-test/internal/api/adapter/entity"
+	messageHandler "dis-test/internal/api/adapter/message_handler"
 	appRepository "dis-test/internal/api/adapter/repository"
 	_ "dis-test/internal/api/app/model"
 	appSerializer "dis-test/internal/api/app/serializer"
@@ -9,6 +11,7 @@ import (
 	appHandler "dis-test/internal/api/port/handler"
 	pkg "dis-test/pkg/responser"
 	"fmt"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -26,10 +29,7 @@ import (
 // @BasePath	/api
 func main() {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
-	runAPIServer()
-}
 
-func runAPIServer() {
 	db, err := initDB()
 	if err != nil {
 		logrus.Fatalf("Error occurred while opening db: %s", err.Error())
@@ -39,6 +39,13 @@ func runAPIServer() {
 	if err != nil {
 		logrus.Fatalf("Error occurred while automigrating: %s", err.Error())
 	}
+
+	go runAPIServer(db)
+
+	runMessageConsuming(db)
+}
+
+func runAPIServer(db *gorm.DB) {
 	r := mux.NewRouter()
 
 	repo := appRepository.NewRepository(db)
@@ -71,6 +78,30 @@ func initDB() (db *gorm.DB, err error) {
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	return db, err
+}
+
+func runMessageConsuming(db *gorm.DB) {
+	repo := appRepository.NewRepository(db)
+	serializer := appSerializer.NewSerializer()
+	service := appService.NewService(repo, serializer)
+
+	disciplineMessageHandler := messageHandler.NewDisciplineMessageHandler(service)
+	disciplineConsumer := consumer.NewConsumer("disciplines", disciplineMessageHandler)
+
+	config := getKafkaConfig()
+	disciplineConsumer.Init(&config)
+	logrus.Error("ready to read")
+	disciplineConsumer.ReadMessages()
+}
+
+func getKafkaConfig() kafka.ConfigMap {
+	m := make(map[string]kafka.ConfigValue)
+
+	m["bootstrap.servers"] = "kafka:9092"
+	m["group.id"] = "discipline-api"
+	m["auto.offset.reset"] = "earliest"
+
+	return m
 }
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
