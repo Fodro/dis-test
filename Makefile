@@ -45,8 +45,6 @@ enter-api:
 	$(DOCKER_COMPOSE) exec api bash
 enter-postgres:
 	$(DOCKER_COMPOSE) exec postgres bash
-enter-redoc:
-	$(DOCKER_COMPOSE) exec redoc bash
 
 # Showing logs
 logs-nginx:
