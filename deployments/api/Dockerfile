@@ -9,4 +9,6 @@ COPY --from=modules /go/pkg /go/pkg
 WORKDIR /app
 COPY . .
 
+RUN go install github.com/swaggo/swag/cmd/swag@v1.16.2
+
 CMD ["go", "run", "cmd/discipline-api/main.go"]

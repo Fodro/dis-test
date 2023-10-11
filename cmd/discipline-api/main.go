@@ -3,6 +3,7 @@ package main
 import (
 	entity "dis-test/internal/api/adapter/entity"
 	appRepository "dis-test/internal/api/adapter/repository"
+	_ "dis-test/internal/api/app/model"
 	appSerializer "dis-test/internal/api/app/serializer"
 	appService "dis-test/internal/api/app/service"
 	appHandler "dis-test/internal/api/port/handler"
@@ -10,12 +11,19 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"net/http"
 	"os"
 )
 
+//	@title			Discipline API
+//	@version		1.0
+//	@description	CRUD API for disciplines
+
+// @host		localhost:8080
+// @BasePath	/api
 func main() {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	runAPIServer()
@@ -39,6 +47,15 @@ func runAPIServer() {
 	responser := pkg.NewResponser()
 	appHandler.NewHandler(r, service, responser)
 
+	r.PathPrefix("/api/swagger/").Handler(httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:8080/redoc/swagger.json"),
+		httpSwagger.DeepLinking(true),
+		httpSwagger.DocExpansion("none"),
+		httpSwagger.DomID("swagger-ui"),
+	)).Methods(http.MethodGet)
+
+	r.PathPrefix("/").HandlerFunc(defaultHandler)
+
 	logrus.Fatal(http.ListenAndServe(":8080", r))
 }
 
@@ -54,4 +71,8 @@ func initDB() (db *gorm.DB, err error) {
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	return db, err
+}
+
+func defaultHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "%s", r.RequestURI)
 }

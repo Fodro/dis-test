@@ -61,6 +61,9 @@ logs-redoc:
 ps:
 	$(DOCKER_COMPOSE) ps
 
+generate-openapi:
+	$(DOCKER_COMPOSE) exec -T api swag init -g cmd/discipline-api/main.go --propertyStrategy snakecase --parseDependency
+
 migrate-up:
 	echo "It will be migrated soon..."
 

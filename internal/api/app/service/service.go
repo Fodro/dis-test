@@ -11,11 +11,11 @@ type Service struct {
 }
 
 type Discipline interface {
-	Create(disciplineDTO *model.Discipline) (*model.Discipline, error)
+	Create(disciplineDTO *model.DisciplineInput) (*model.Discipline, error)
 	GetList() (*model.DisciplineList, error)
 	GetById(id int) (*model.Discipline, error)
 	DeleteById(id int) error
-	UpdateById(id int, disciplineDTO *model.Discipline) (*model.Discipline, error)
+	UpdateById(id int, disciplineDTO *model.DisciplineInput) (*model.Discipline, error)
 	AddPrerequisiteById(disciplineId int, prerequisiteId int) (*model.Discipline, error)
 	DeletePrerequisiteById(disciplineId int, prerequisiteId int) (*model.Discipline, error)
 }

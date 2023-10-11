@@ -15,7 +15,7 @@ func NewDisciplineService(repo *repository.Repo, serializer *dto.Serializer) *Di
 	return &DisciplineService{repo, serializer}
 }
 
-func (service *DisciplineService) Create(disciplineDTO *model.Discipline) (*model.Discipline, error) {
+func (service *DisciplineService) Create(disciplineDTO *model.DisciplineInput) (*model.Discipline, error) {
 	disciplineEntity, err := service.repo.Create(disciplineDTO.Title, disciplineDTO.CreditUnits, disciplineDTO.AcademicHours)
 
 	if err != nil {
@@ -55,7 +55,7 @@ func (service *DisciplineService) DeleteById(id int) error {
 	return service.repo.Delete(id)
 }
 
-func (service *DisciplineService) UpdateById(id int, disciplineDTO *model.Discipline) (*model.Discipline, error) {
+func (service *DisciplineService) UpdateById(id int, disciplineDTO *model.DisciplineInput) (*model.Discipline, error) {
 	disciplineEntity, err := service.repo.Update(id, disciplineDTO.Title, disciplineDTO.CreditUnits, disciplineDTO.AcademicHours)
 
 	if err != nil {

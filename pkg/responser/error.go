@@ -1,6 +1,6 @@
 package pkg
 
 type Error struct {
-	Code  int
-	Error interface{}
+	Code  int         `json:"code"`
+	Error interface{} `json:"error"`
 }

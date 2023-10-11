@@ -1,0 +1,294 @@
+basePath: /api
+definitions:
+  dis-test_internal_api_app_model.Discipline:
+    description: Discipline
+    properties:
+      academic_hours:
+        type: integer
+      credit_units:
+        type: number
+      id:
+        type: integer
+      prerequisites:
+        items:
+          $ref: '#/definitions/dis-test_internal_api_app_model.Discipline'
+        type: array
+      title:
+        type: string
+    type: object
+  dis-test_internal_api_app_model.DisciplineInput:
+    description: DisciplineInput
+    properties:
+      academic_hours:
+        type: integer
+      credit_units:
+        type: number
+      title:
+        type: string
+    type: object
+  dis-test_internal_api_app_model.DisciplineList:
+    description: List of disciplines
+    properties:
+      disciplines:
+        items:
+          $ref: '#/definitions/dis-test_internal_api_app_model.Discipline'
+        type: array
+    type: object
+  dis-test_internal_api_app_model.Prerequisite:
+    description: ID of prerequisite to add
+    properties:
+      id:
+        type: integer
+    type: object
+  dis-test_pkg_responser.Error:
+    properties:
+      code:
+        type: integer
+      error: {}
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: CRUD API for disciplines
+  title: Discipline API
+  version: "1.0"
+paths:
+  /discipline/:
+    get:
+      consumes:
+      - application/json
+      description: List of all disciplines existing in DB
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dis-test_internal_api_app_model.DisciplineList'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+      summary: List all disciplines
+      tags:
+      - discipline
+    post:
+      consumes:
+      - application/json
+      description: Create new discipline by constant data
+      parameters:
+      - description: The input discipline struct
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dis-test_internal_api_app_model.DisciplineInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dis-test_internal_api_app_model.Discipline'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+      summary: Create discipline
+      tags:
+      - discipline
+  /discipline/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Find and delete concrete discipline by id
+      parameters:
+      - description: Discipline ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+      summary: Delete discipline
+      tags:
+      - discipline
+    get:
+      consumes:
+      - application/json
+      description: Find and serve concrete discipline by id
+      parameters:
+      - description: Discipline ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dis-test_internal_api_app_model.Discipline'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+      summary: Show discipline
+      tags:
+      - discipline
+    put:
+      consumes:
+      - application/json
+      description: Find and update concrete discipline by id
+      parameters:
+      - description: Discipline ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: The input discipline struct
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dis-test_internal_api_app_model.DisciplineInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dis-test_internal_api_app_model.Discipline'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+      summary: Update discipline
+      tags:
+      - discipline
+  /discipline/{id}/prerequisite:
+    delete:
+      consumes:
+      - application/json
+      description: Find discipline and delete relation to prerequisite by ids
+      parameters:
+      - description: Discipline ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: The input struct contains id of prerequisite to delete
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dis-test_internal_api_app_model.Prerequisite'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dis-test_internal_api_app_model.Discipline'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+      summary: Delete prerequisite
+      tags:
+      - discipline
+    patch:
+      consumes:
+      - application/json
+      description: Find discipline and prerequisite, link them
+      parameters:
+      - description: Discipline ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: The input struct contains discipline id to add as prerequisite
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dis-test_internal_api_app_model.Prerequisite'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dis-test_internal_api_app_model.Discipline'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dis-test_pkg_responser.Error'
+      summary: Add prerequisite
+      tags:
+      - discipline
+swagger: "2.0"
