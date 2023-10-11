@@ -30,7 +30,7 @@ stop:
 	$(DOCKER_COMPOSE) down
 
 test:
-	$(DOCKER_COMPOSE) exec -T api go test -v ./...
+	$(DOCKER_COMPOSE) exec -T api go test -v -cover ./...
 
 lint-api:
 	docker run --rm -v $(PWD)/:/app -w /server golangci/golangci-lint:v1.31.0 golangci-lint run -v
